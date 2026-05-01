@@ -33,7 +33,10 @@
         .text-content { max-width: 85%; text-align: center; z-index: 1; opacity: 0; transition: opacity 2s ease-in-out 0.8s; }
         .page.active .text-content { opacity: 1; }
         .text-content p { color: rgba(255, 255, 255, 0.85); font-size: 18px; line-height: 2.8; letter-spacing: 0.18em; font-weight: 300; text-shadow: 0 2px 15px rgba(0,0,0,0.9); margin-bottom: 12px; }
-        .highlight { color: #d4af37 !important; font-size: 20px !important; font-weight: 600 !important; letter-spacing: 0.3em !important; margin-top: 30px; display: block; }
+        
+        /* 墨金色提示樣式 */
+        .highlight { color: #d4af37 !important; font-size: 19px !important; font-weight: 600 !important; letter-spacing: 0.25em !important; margin-top: 30px; display: block; opacity: 0.9; }
+        
         .audio-tip { font-size: 12px !important; color: rgba(212, 175, 55, 0.5) !important; margin-top: 40px; font-weight: 200; display: block; }
 
         #music { position: fixed; top: 35px; right: 25px; z-index: 1000; font-size: 28px; color: #d4af37; cursor: pointer; opacity: 0.4; }
@@ -54,44 +57,48 @@
 
 <script>
 const data = [
-    { img: "1.jpg", text: ["端起這杯酒的瞬間，你就是整個餐廳最迷人的人", "泡沫散了，但今晚的你，我記得很清楚"] },
-    { img: "2.jpg", text: ["你把遠方裝進袋子——我想把你裝進我所有去過的地方", "風吹過沙丘的痕跡，像極了你在我心裏留下的樣子"] },
-    { img: "3.jpg", text: ["黑白濾掉了顏色，卻濾不掉你漫不經心的好看", "你背著那塊牌子的樣子，像是整個城市都是你的布景"] },
-    { img: "4.jpg", text: ["連模糊的你，都讓人想看清楚", "只露出半張臉，卻藏不住所有的溫柔"], ratio: true },
-    { img: "5.jpg", text: ["素顏站在鏡子前，比任何濾鏡都更讓人心動", "這一刻的你，只屬於你自己——那是最珍貴的畫面"], ratio: true },
-    { img: "6.jpg", text: ["你握著它的手那麼溫柔，我有點羨慕一個布娃娃", "相信魔法的人，眼睛裏會一直有光"] },
-    { img: "7.jpg", text: ["手上的創可貼藏著小故事，我想聽你慢慢講完", "你把手搭在方向盤上的樣子，讓人覺得跟著你去哪都放心"] },
-    { img: "8.jpg", text: ["同一張臉，兩種表情，哪一個都讓我移不開眼", "夜裏的你，有一種不需要被理解的美"], ratio: true },
-    { img: "9.jpg", text: ["你穿漢服的樣子，像是從我某個前世的夢裏走出來的", "站在那裏什麼都不用做，就已經是一首詩"] },
-    { img: "10.jpg", text: ["你窩在那頂帽子裏，讓人想把所有的風都替你擋掉", "冬天因為有你這樣的人，才變得值得"] },
-    { img: "11.jpg", text: ["這枚戒指很好看，但戴在你手上才算找到了歸處", "有人把最好的東西留給你，是因為你值得被珍視"] },
-    { img: "12.jpg", text: ["紅珊瑚戒指隨手一抬，就是一幅畫", "你出現在哪裏，哪裏就有了故事"] },
-    { img: "13.jpg", text: ["你發呆的樣子最好看，那是你難得不設防的瞬間", "安靜坐著的你，比說話的時候更有力量"] },
-    { img: "14.jpg", text: ["耳朵上夾著小恐龍，讓人覺得喜歡你這件事可以很輕盈", "你從不完全長大——那是你身上最迷人的部分"] },
-    { img: "15.jpg", text: ["陽光打在你笑臉上，山和湖都變成了背景板", "你笑起來的樣子，是這一年最好的風景"], ratio: true },
-    { img: "16.jpg", text: ["鼻子上貼著小豬面膜，可愛得讓人不敢大聲說話", "連懶散的早晨，你也過得那麼有滋味"] },
-    { img: "17.jpg", text: ["讀哲學的女孩站在最美的圖書館——這個畫面本身就是答案", "你讀過的每一頁，都悄悄撐大了你的世界"] },
-    { img: "18.jpg", text: ["貓在你桌上，羽毛筆在你手邊——你的生活美得像在演戲，但是真實的", "能把日子過成這樣的人，內心一定住著很溫柔的光"] },
-    { img: "19.jpg", text: ["紙屑落下的那一秒，你笑得像剛被全世界祝福的人", "因為你本來就值得——不需要任何理由"] },
-    { img: "20.jpg", text: ["你舉著這隻傻乎乎的熊，讓我覺得跟你在一起什麼都可以很好玩", "選擇這隻熊的人，心裏一定住著很多愛"] },
-    { img: "21.jpg", text: ["珍珠很小，但配上你這張臉，貴氣是藏不住的", "剛洗完澡的你，乾淨得讓人不敢說太多話，只想靜靜多看一會兒"] },
-    { img: "22.jpg", text: ["蝴蝶落在你耳朵上，不知道是它選擇了你，還是你本來就是它該停留的地方", "流蘇輕輕晃著，像你所有說出口又收回去的溫柔"] },
-    { img: "23.jpg", text: ["臉藏在手機後面，但你的氣場已經把整個門廊填滿了", "你是那種不需要露臉，就已經很有故事的人"] }
+    { img: "1.jpg", text: ["端起這杯酒的瞬間，你就是整個餐廳最迷人的人", "泡沫散了，但今晚的你，我記得很清楚"], gold: "微醺得剛剛好" },
+    { img: "2.jpg", text: ["你把遠方裝進袋子——我想把你裝進我所有去過的地方", "風吹過沙丘的痕跡，像極了你在我心裏留下的樣子"], gold: "想和你去流浪" },
+    { img: "3.jpg", text: ["黑白濾掉了顏色，卻濾不掉你漫不經心的好看", "你背著那塊牌子的樣子，像是整個城市都是你的布景"], gold: "經典永不褪色" },
+    { img: "4.jpg", text: ["連模糊的你，都讓人想看清楚", "只露出半張臉，卻藏不住所有的溫柔"], ratio: true, gold: "朦朧也是一種美" },
+    { img: "5.jpg", text: ["素顏站在鏡子前，比任何濾鏡都更讓人心動", "這一刻的你，只屬於你自己——那是最珍貴的畫面"], ratio: true, gold: "真實最動人" },
+    { img: "6.jpg", text: ["你握著它的手那麼溫柔，我有點羨慕一個布娃娃", "相信魔法的人，眼睛裏會一直有光"], gold: "童心未泯的你" },
+    { img: "7.jpg", text: ["手上的創可貼藏著小故事，我想聽你慢慢講完", "你把手搭在方向盤上的樣子，讓人覺得跟著你去哪都放心"], gold: "堅韌且溫柔" },
+    { img: "8.jpg", text: ["同一張臉，兩種表情，哪一個都讓我移不開眼", "夜裏的你，有一種不需要被理解的美"], ratio: true, gold: "多面的迷人之處" },
+    { img: "9.jpg", text: ["你穿漢服的樣子，像是從我某個前世的夢裏走出來的", "站在那裏什麼都不用做，就已經是一首詩"], gold: "歲月靜好" },
+    { img: "10.jpg", text: ["你窩在那頂帽子裏，讓人想把所有的風都替你擋掉", "冬天因為有你這樣的人，才變得值得"], gold: "人間暖陽" },
+    { img: "11.jpg", text: ["這枚戒指很好看，但戴在你手上才算找到了歸處", "有人把最好的東西留給你，是因為你值得被珍視"], gold: "被愛的證明" },
+    { img: "12.jpg", text: ["紅珊瑚戒指隨手一抬，就是一幅畫", "你出現在哪裏，哪裏就有了故事"], gold: "優雅的定格" },
+    { img: "13.jpg", text: ["你發呆的樣子最好看，那是你難得不設防的瞬間", "安靜坐著的你，比說話的時候更有力量"], gold: "此刻無聲勝有聲" },
+    { img: "14.jpg", text: ["耳朵上夾著小恐龍，讓人覺得喜歡你這件事可以很輕盈", "你從不完全長大——那是你身上最迷人的部分"], gold: "古靈精怪" },
+    { img: "15.jpg", text: ["陽光打在你笑臉上，山和湖都變成了背景板", "你笑起來的樣子，是這一年最好的風景"], ratio: true, gold: "全世界都亮了" },
+    { img: "16.jpg", text: ["鼻子上貼著小豬面膜，可愛得讓人不敢大聲說話", "連懶散的早晨，你也過得那麼有滋味"], gold: "享受當下的愜意" },
+    { img: "17.jpg", text: ["讀哲學的女孩站在最美的圖書館——這個畫面本身就是答案", "你讀過的每一頁，都悄悄撐大了你的世界"], gold: "靈魂有香氣" },
+    { img: "18.jpg", text: ["貓在你桌上，羽毛筆在你手邊——你的生活美得像在演戲，但是真實的", "能把日子過成這樣的人，內心一定住著很溫柔的光"], gold: "理想的生活" },
+    { img: "19.jpg", text: ["紙屑落下的那一秒，你笑得像剛被全世界祝福的人", "因為你本來就值得——不需要任何理由"], gold: "閃閃發光的瞬間" },
+    { img: "20.jpg", text: ["你舉著這隻傻乎乎的熊，讓我覺得跟你在一起什麼都可以很好玩", "選擇這隻熊的人，心裏一定住著很多愛"], gold: "簡單的幸福" },
+    { img: "21.jpg", text: ["珍珠很小，但配上你這張臉，貴氣是藏不住的", "剛洗完澡的你，乾淨得讓人不敢說太多話，只想靜靜多看一會兒"], gold: "洗盡鉛華" },
+    { img: "22.jpg", text: ["蝴蝶落在你耳朵上，不知道是它選擇了你，還是你本來就是它該停留的地方", "流蘇輕輕晃著，像你所有說出口又收回去的溫柔"], gold: "靈動如詩" },
+    { img: "23.jpg", text: ["臉藏在手機後面，但你的氣場已經把整個門廊填滿了", "你是那種不需要露臉，就已經很有故事的人"], gold: "獨一無二的存在" }
 ];
 
 const container = document.getElementById("main-container");
 const exitBtn = document.getElementById("exit-btn");
 
 data.forEach((item, i) => {
+    // 文字頁
     let textPage = document.createElement('section');
     textPage.className = 'page';
     let textHtml = `<div class="text-content">`;
     item.text.forEach((line) => { textHtml += `<p>${line}</p>`; });
+    // 渲染不同的墨金色文字
+    textHtml += `<span class="highlight">${item.gold}</span>`;
     if(i === 0) textHtml += `<span class="audio-tip">建議開啟音樂，緩慢下滑</span>`;
     textHtml += `</div>`;
     textPage.innerHTML = textHtml;
     container.appendChild(textPage);
 
+    // 圖片頁
     let imgPage = document.createElement('section');
     imgPage.className = 'page';
     if(item.ratio) imgPage.classList.add('keep-ratio'); 
@@ -102,6 +109,7 @@ data.forEach((item, i) => {
     container.appendChild(imgPage);
 });
 
+// 結尾頁
 let endPage = document.createElement('section');
 endPage.className = 'page';
 endPage.innerHTML = `
@@ -124,7 +132,7 @@ container.onscroll = () => {
         else p.classList.remove('active');
     });
 
-    // 只在第 19 張圖（第 38 頁，index 37）顯示，其餘頁面隱藏
+    // 忍住按鈕只在第 19 張圖（index 37）顯示，隨風而逝
     if(activeIndex === 37) { 
         exitBtn.classList.add('show');
     } else {
