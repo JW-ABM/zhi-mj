@@ -1,0 +1,161 @@
+﻿<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>留給妳</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; background: #000; font-family: -apple-system, "PingFang TC", "Microsoft JhengHei", sans-serif; overflow: hidden; }
+        
+        .container { height: 100vh; overflow-y: auto; scroll-snap-type: y mandatory; -webkit-overflow-scrolling: touch; }
+        
+        .page { height: 100vh; width: 100%; scroll-snap-align: start; position: relative; overflow: hidden; background: #000; display: flex; align-items: center; justify-content: center; }
+        
+        /* 圖片基礎樣式 */
+        .page img { 
+            position: absolute; 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            opacity: 0; 
+            transition: opacity 2.5s ease-in-out, transform 10s linear;
+            transform: scale(1.05);
+            object-position: center;
+        }
+
+        /* 激活態動畫 */
+        .page.active img { opacity: 0.6; transform: scale(1.15); }
+
+        /* 特殊圖片處理 */
+        .page.panorama img { object-fit: contain !important; transform: scale(1) !important; }
+        .page.panorama.active img { opacity: 0.8 !important; transform: scale(1) !important; }
+        .page.top-focus img { object-position: top center; }
+
+        /* 文字內容樣式 */
+        .text-content { max-width: 85%; text-align: center; z-index: 1; opacity: 0; transition: opacity 2s ease-in-out 0.8s; }
+        .page.active .text-content { opacity: 1; }
+        .text-content p { color: rgba(255, 255, 255, 0.85); font-size: 18px; line-height: 2.8; letter-spacing: 0.18em; font-weight: 300; text-shadow: 0 2px 15px rgba(0,0,0,0.9); margin-bottom: 12px; }
+        .highlight { color: #d4af37 !important; font-size: 20px !important; font-weight: 600 !important; letter-spacing: 0.3em !important; margin-top: 30px; display: block; }
+        .audio-tip { font-size: 12px !important; color: rgba(212, 175, 55, 0.5) !important; margin-top: 40px; font-weight: 200; display: block; transition: opacity 1s; }
+
+        /* 音樂控制 */
+        #music { position: fixed; top: 35px; right: 25px; z-index: 1000; font-size: 28px; color: #d4af37; cursor: pointer; transition: all 1s ease; opacity: 0.4; }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        #music.playing { animation: rotate 6s linear infinite; opacity: 1; transform: translateX(-15px); }
+
+        /* 忍住按鈕 */
+        .exit { position: fixed; bottom: 45px; left: 35px; z-index: 1000; color: #d4af37; font-size: 15px; text-decoration: none; letter-spacing: 2px; font-weight: 300; opacity: 0; transition: opacity 2s ease-in-out; pointer-events: none; }
+        .exit.show { opacity: 0.7; pointer-events: auto; }
+    </style>
+</head>
+<body>
+
+<audio id="bgm" src="bgm.mp3" loop preload="auto"></audio>
+<div id="music">♫</div>
+<a href="https://abm-mj.pages.dev" target="_blank" class="exit" id="exit-btn">忍住</a>
+
+<div class="container" id="main-container"></div>
+
+<script>
+const data = [
+    { img: "1.jpg", text: ["端起這杯酒的瞬間，你就是整個餐廳最迷人的人。", "泡沫散了，但今晚的你，我記得很清楚。"] },
+    { img: "2.jpg", text: ["你把遠方裝進袋子——我想把你裝進我所有去過的地方。", "風吹過沙丘的痕跡，像極了你在我心裏留下的樣子。"] },
+    { img: "3.jpg", text: ["黑白濾掉了顏色，卻濾不掉你漫不經心的好看。", "你背著那塊牌子的樣子，像是整個城市都是你的布景。"] },
+    { img: "4.jpg", text: ["連模糊的你，都讓人想看清楚。", "只露出半張臉，卻藏不住所有的溫柔。"] },
+    { img: "5.jpg", text: ["素顏站在鏡子前，比任何濾鏡都更讓人心動。", "這一刻的你，只屬於你自己——那是最珍貴的畫面。"] },
+    { img: "6.jpg", text: ["你握著它的手那麼溫柔，我有點羨慕一個布娃娃。", "相信魔法的人，眼睛裏會一直有光。"] },
+    { img: "7.jpg", text: ["手上的創可貼藏著小故事，我想聽你慢慢講完。", "你把手搭在方向盤上的樣子，讓人覺得跟著你去哪都放心。"] },
+    { img: "8.jpg", text: ["同一張臉，兩種表情，哪一個都讓我移不開眼。", "夜裏的你，有一種不需要被理解的美。"] },
+    { img: "9.jpg", text: ["你穿漢服的樣子，像是從我某個前世的夢裏走出來的。", "站在那裏什麼都不用做，就已經是一首詩。"] },
+    { img: "10.jpg", text: ["你窩在那頂帽子裏，讓人想把所有的風都替你擋掉。", "冬天因為有你這樣的人，才變得值得。"] },
+    { img: "11.jpg", text: ["這枚戒指很好看，但戴在你手上才算找到了歸處。", "有人把最好的東西留給你，是因為你值得被珍視。"] },
+    { img: "12.jpg", text: ["紅珊瑚戒指隨手一抬，就是一幅畫。", "你出現在哪裏，哪裏就有了故事。"] },
+    { img: "13.jpg", text: ["你發呆的樣子最好看，那是你難得不設防的瞬間。", "安靜坐著的你，比說話的時候更有力量。"] },
+    { img: "14.jpg", text: ["耳朵上夾著小恐龍，讓人覺得喜歡你這件事可以很輕盈。", "你從不完全長大——那是你身上最迷人的部分。"] },
+    { img: "15.jpg", text: ["陽光打在你笑臉上，山和湖都變成了背景板。", "你笑起來的樣子，是這一年最好的風景。"] },
+    { img: "16.jpg", text: ["鼻子上貼著小豬面膜，可愛得讓人不敢大聲說話。", "連懶散的早晨，你也過得那麼有滋味。"] },
+    { img: "17.jpg", text: ["讀哲學的女孩站在最美的圖書館——這個畫面本身就是答案。", "你讀過的每一頁，都悄悄撐大了你的世界。"] },
+    { img: "18.jpg", text: ["貓在你桌上，羽毛筆在你手邊——你的生活美得像在演戲，但是真實的。", "能把日子過成這樣的人，內心一定住著很溫柔的光。"] },
+    { img: "19.jpg", text: ["紙屑落下的那一秒，你笑得像剛被全世界祝福的人。", "因為你本來就值得——不需要任何理由。"] },
+    { img: "20.jpg", text: ["你舉著這隻傻乎乎的熊，讓我覺得跟你在一起什麼都可以很好玩。", "選擇這隻熊的人，心裏一定住著很多愛。"] },
+    { img: "21.jpg", text: ["珍珠很小，但配上你這張臉，貴氣是藏不住的。", "剛洗完澡的你，乾淨得讓人不敢說太多話，只想靜靜多看一會兒。"] },
+    { img: "22.jpg", text: ["蝴蝶落在你耳朵上，不知道是它選擇了你，還是你本來就是它該停留的地方。", "流蘇輕輕晃著，像你所有說出口又收回去的溫柔。"] },
+    { img: "23.jpg", text: ["臉藏在手機後面，但你的氣場已經把整個門廊填滿了。", "你是那種不需要露臉，就已經很有故事的人。"] }
+];
+
+const container = document.getElementById("main-container");
+const exitBtn = document.getElementById("exit-btn");
+
+data.forEach((item, i) => {
+    let textPage = document.createElement('section');
+    textPage.className = 'page';
+    let textHtml = `<div class="text-content">`;
+    item.text.forEach((line) => { textHtml += `<p>${line}</p>`; });
+    if(i === 0) textHtml += `<span class="audio-tip">建議開啟音樂，緩慢下滑</span>`;
+    textHtml += `</div>`;
+    textPage.innerHTML = textHtml;
+    container.appendChild(textPage);
+
+    let imgPage = document.createElement('section');
+    imgPage.className = 'page';
+    if(i === 1) imgPage.classList.add('panorama'); 
+    if(i === 9) imgPage.classList.add('top-focus'); 
+    imgPage.innerHTML = `<img src="${item.img}" loading="${i < 2 ? 'eager' : 'lazy'}">`;
+    container.appendChild(imgPage);
+});
+
+let endPage = document.createElement('section');
+endPage.className = 'page';
+endPage.innerHTML = `
+    <div class="text-content">
+        <p>翻完你所有的照片</p>
+        <p>熱情是你給世界的禮物</p>
+        <p>溫柔是你藏在細節裏的秘密</p>
+        <p class="highlight">做你生命裏出現的人，是一種運氣</p>
+    </div>
+`;
+container.appendChild(endPage);
+
+let timer = null;
+container.onscroll = () => {
+    const scrollPos = container.scrollTop;
+    const height = window.innerHeight;
+    const activeIndex = Math.round(scrollPos / height);
+    
+    Array.from(container.children).forEach((p, idx) => {
+        if(idx === activeIndex) p.classList.add('active');
+        else p.classList.remove('active');
+    });
+
+    // 忍住按鈕：精確在第 38 頁（索引 37）顯示
+    // 第 19 組圖文：文字頁 index 36，圖片頁 index 37。
+    if(activeIndex === 37) { 
+        exitBtn.classList.add('show');
+    } else if (activeIndex < 37) {
+        exitBtn.classList.remove('show');
+    }
+    // 38 頁以後按鈕持續顯示，直到看完
+};
+
+setTimeout(() => container.children[0].classList.add('active'), 100);
+
+const audio = document.getElementById("bgm");
+const btn = document.getElementById("music");
+const startAudio = () => {
+    if(audio.paused) {
+        audio.play().catch(()=>{});
+        btn.classList.add('playing');
+        const tip = document.querySelector('.audio-tip');
+        if(tip) tip.style.opacity = "0";
+    }
+};
+btn.onclick = (e) => {
+    e.stopPropagation();
+    if(audio.paused) startAudio();
+    else { audio.pause(); btn.classList.remove('playing'); }
+};
+document.addEventListener("click", startAudio, {once: true});
+</script>
+</body>
+</html>
